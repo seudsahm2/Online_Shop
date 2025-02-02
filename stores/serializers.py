@@ -2,6 +2,39 @@ from rest_framework import serializers
 from .models import Category, Store, Product
 
 
+class CategoryListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'name']
+
+
+class CategoryDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'description']
+
+
+class ProductListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ['id', 'name', 'price', 'category', 'image']
+
+
+class ProductDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = [
+            'id',
+            'name',
+            'store',
+            'category',
+            'image',
+            'stock_quantity',
+            'description',
+            'available'
+        ]
+
+
 class StoreListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Store
@@ -25,10 +58,3 @@ class StoreDetailSerializer(serializers.ModelSerializer):
             'email',
             'active',
         ]
-
-
-class ProductListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Product
-        fields = ['id', 'name', 'price', 'category', 'image']
-
