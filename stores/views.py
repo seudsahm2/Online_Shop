@@ -27,6 +27,11 @@ class StoreDetailView(generics.RetrieveAPIView):
     serializer_class = StoreDetailSerializer
 
 
+class StoreCreateView(generics.CreateAPIView):
+    queryset = Store.objects.all()
+    serializer_class = StoreDetailSerializer
+
+
 class ProductListView(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductListSerializer
