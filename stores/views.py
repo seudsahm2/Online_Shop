@@ -5,39 +5,45 @@ from .models import Store, Category, Product
 # Create your views here.
 
 
-class CategoryListView(generics.ListAPIView):
+class CategoryListAPIView(generics.ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategoryListSerializer
 
 
-class CategoryDetailView(generics.RetrieveAPIView):
+class CategoryDetailAPIView(generics.RetrieveAPIView):
     lookup_field = "id"
     queryset = Category.objects.all()
     serializer_class = CategoryDetailSerializer
 
 
-class StoreListView(generics.ListAPIView):
+class StoreListAPIView(generics.ListAPIView):
     queryset = Store.objects.all()
     serializer_class = StoreListSerializer
 
 
-class StoreDetailView(generics.RetrieveAPIView):
+class StoreDetailAPIView(generics.RetrieveAPIView):
     lookup_field = "id"
     queryset = Store.objects.all()
     serializer_class = StoreDetailSerializer
 
 
-class StoreCreateView(generics.CreateAPIView):
+class StoreCreateAPIView(generics.CreateAPIView):
     queryset = Store.objects.all()
     serializer_class = StoreDetailSerializer
 
 
-class ProductListView(generics.ListAPIView):
+class StoreRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
+    lookup_field = "id"
+    queryset = Store.objects.all()
+    serializer_class = StoreDetailSerializer
+
+
+class ProductListAPIView(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductListSerializer
 
 
-class ProductDetailView(generics.RetrieveAPIView):
+class ProductDetailAPIView(generics.RetrieveAPIView):
     lookup_field = "id"
     queryset = Product.objects.all()
     serializer_class = ProductDetailSerializer
