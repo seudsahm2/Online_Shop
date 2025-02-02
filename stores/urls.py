@@ -7,9 +7,13 @@ urlpatterns = [
     path('create/', views.StoreCreateAPIView.as_view(), name="create_store"),
     path('update/<int:id>/', views.StoreRetrieveUpdateAPIView.as_view(),
          name="update_store"),
+    path('delete/<int:id>/',views.StoreDestroyAPIView.as_view(),name="delete_store"),
+    
     path('products/', views.ProductListAPIView.as_view(), name="products"),
     path('products/<int:id>/', views.ProductDetailAPIView.as_view(),
          name="product_detail"),
+    
+    
     path('categories/', views.CategoryListAPIView.as_view(), name="category_list"),
     path('categories/<int:id>/', views.CategoryDetailAPIView.as_view(),
          name="product_detail"),

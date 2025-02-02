@@ -30,18 +30,19 @@ class StoreDetailAPIView(generics.RetrieveAPIView):
 class StoreCreateAPIView(generics.CreateAPIView):
     queryset = Store.objects.all()
     serializer_class = StoreDetailSerializer
-
-
 class StoreRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
     lookup_field = "id"
     queryset = Store.objects.all()
     serializer_class = StoreDetailSerializer
 
-
+class StoreDestroyAPIView(generics.DestroyAPIView):
+    lookup_field = "id"
+    queryset = Store.objects.all()
+    
+    
 class ProductListAPIView(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductListSerializer
-
 
 class ProductDetailAPIView(generics.RetrieveAPIView):
     lookup_field = "id"
