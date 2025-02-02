@@ -46,5 +46,7 @@ class Product(models.Model):
     image = models.ImageField(upload_to='Products', blank=True, null=True)
     available = models.BooleanField(default=True)
 
-    def __str__(self):
-        return "{} - {} - {}".format(self.name, self.store.name, self.category.name)
+
+def __str__(self):
+    category_name = self.category.name if self.category else "No Category"
+    return "{} - {} - {}".format(self.name, self.store.name, category_name)
