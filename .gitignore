@@ -1,3 +1,38 @@
-venv
-__pycache__
+# Python
 *.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Virtual Environment
+venv/
+env/
+
+# Environment Variables & Secrets
+.env
+*.env
+config/settings/local.py
+config/settings/dev.py
+
+# Django-Specific
+/media/
+staticfiles/
+static/
+Products/
+Logos/
+
+# Database
+*.sqlite3
+/db.sqlite3
+
+# Logs
+*.log
+logs/
+
+# IDE & Editor Configs
+.vscode/
+.idea/
+
+# Dependencies
+pip-log.txt
+pip-delete-this-directory.txt

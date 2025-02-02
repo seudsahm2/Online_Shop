@@ -25,7 +25,7 @@ class Store(models.Model):
     zip_code = models.IntegerField(blank=True, default=0)
     website = models.URLField(max_length=420, blank=True)
     phone_number = models.CharField(validators=[RegexValidator(
-        regex=r'^\1?\d{9,10}$')], max_length=10, blank=True)
+        regex=r'^(1)?\d{9,10}$')], max_length=10, blank=True)
     logo_image = models.ImageField(upload_to='Logos', blank=True)
     email = models.EmailField(max_length=24, blank=True)
     active = models.BooleanField(default=True)
@@ -44,7 +44,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=8, decimal_places=2)
     stock_quantity = models.IntegerField(default=0)
     image = models.ImageField(upload_to='Products', blank=True, null=True)
-    active = models.BooleanField(default=True)
+    available = models.BooleanField(default=True)
 
     def __str__(self):
         return "{} - {} - {}".format(self.name, self.store.name, self.category.name)
