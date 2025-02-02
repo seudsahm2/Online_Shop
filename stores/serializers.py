@@ -8,7 +8,6 @@ class StoreListSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'city', 'zip_code']
 
 
-
 class StoreDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Store
@@ -26,3 +25,10 @@ class StoreDetailSerializer(serializers.ModelSerializer):
             'email',
             'active',
         ]
+
+
+class ProductListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ['id', 'name', 'price', 'category', 'image']
+
