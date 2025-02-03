@@ -1,0 +1,22 @@
+[
+    {
+        "id": 2,
+        "name": "Seud Food Delivery",
+        "city": "addisababa"
+    },
+    {
+        "id": 3,
+        "name": "Adem Shoe Shop",
+        "city": "washington"
+    },
+    {
+        "id": 4,
+        "name": "maruf Cloth center",
+        "city": "paris"
+    },
+    {
+        "id": 5,
+        "name": "Eyob furniture",
+        "city": "berlin"
+    }
+]
