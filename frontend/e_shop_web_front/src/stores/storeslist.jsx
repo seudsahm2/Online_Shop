@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { Component } from 'react';
 import StoreDetail from './storedetail';
+import StoreForm from './storeform';
 class StoreList extends Component{
     constructor(props){
         super(props);
@@ -41,6 +42,7 @@ class StoreList extends Component{
     render(){
         return(
             <div>
+                <StoreForm />
                 {this.state.storesData.map(item =>{
                     return <h3 key={item.id} onClick={() => this.showStoreDetail(item)}>{item.name} - {item.city}</h3>
                     }
