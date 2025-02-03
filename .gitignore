@@ -18,8 +18,8 @@ config/settings/dev.py
 /media/
 staticfiles/
 static/
-Products/
-Logos/
+products/
+logos/
 
 # Database
 *.sqlite3
