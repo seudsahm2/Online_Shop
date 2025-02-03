@@ -31,7 +31,7 @@ from .models import Store, Category, Product
 # class CategoryDestroyAPIView(generics.DestroyAPIView):
 #     lookup_field = "id"
 #     queryset = Category.objects.all()
-    
+
 class CategoryViewSet(ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategoryDetailSerializer
@@ -66,7 +66,11 @@ class CategoryViewSet(ModelViewSet):
 
 class StoreViewSet(ModelViewSet):
     queryset = Store.objects.all()
-    serializer_class = StoreDetailSerializer
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return StoreListSerializer  # ✅ Use correct serializer for list view
+        return StoreDetailSerializer  # ✅ Use detail serializer otherwise
 
 
 # class ProductListAPIView(generics.ListAPIView):

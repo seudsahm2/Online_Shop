@@ -26,7 +26,7 @@ class Store(models.Model):
     website = models.URLField(max_length=420, blank=True)
     phone_number = models.CharField(validators=[RegexValidator(
         regex=r'^(1)?\d{9,10}$')], max_length=10, blank=True)
-    logo_image = models.ImageField(upload_to='Logos', blank=True)
+    logo_image = models.ImageField(upload_to='logos/', blank=True)
     email = models.EmailField(max_length=24, blank=True)
     active = models.BooleanField(default=True)
 
@@ -43,7 +43,7 @@ class Product(models.Model):
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=8, decimal_places=2)
     stock_quantity = models.IntegerField(default=0)
-    image = models.ImageField(upload_to='Products', blank=True, null=True)
+    image = models.ImageField(upload_to='products/', blank=True, null=True)
     available = models.BooleanField(default=True)
 
 
