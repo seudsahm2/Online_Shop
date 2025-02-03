@@ -22,7 +22,7 @@ function App() {
           Shop Everything you want
         </p>
         <h1>
-          Products
+          Stores
         </h1>
         <StoreList/>
       </div>
