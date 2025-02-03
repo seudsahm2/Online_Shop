@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from .serializers import StoreListSerializer, StoreDetailSerializer, ProductListSerializer, ProductDetailSerializer, CategoryListSerializer, CategoryDetailSerializer
 from rest_framework import generics
 from rest_framework.viewsets import ModelViewSet
+from .serializers import StoreListSerializer, StoreDetailSerializer, ProductListSerializer, ProductDetailSerializer, CategoryListSerializer, CategoryDetailSerializer
 from .models import Store, Category, Product
 # Create your views here.
 
