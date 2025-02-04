@@ -1,6 +1,5 @@
 import axios from 'axios';
-import React, { Component } from 'react';
-import StoreDetail from './storedetail';
+import { Component } from 'react';
 
 class StoreForm extends Component {
   constructor(props) {
@@ -49,8 +48,9 @@ class StoreForm extends Component {
     }
     formData.append('email', this.state.email);
     formData.append('active', this.state.active);
+    this.props.onSuccess();
 
-    axios.post("http://127.0.0.1:8000/store/", formData, {
+    axios.post(import.meta.env.VITE_APP_URL, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
@@ -66,109 +66,252 @@ class StoreForm extends Component {
   render() {
     const { name, city, state, street, zip_code, description, website, phone_number, email, active } = this.state;
     return (
-      <form onSubmit={this.handleSubmit} encType='multipart/form-data'>
-        <div>
-          Name
-          <input
-            type='text'
-            name='name'
-            value={name}
-            onChange={this.handleChange}
-          />
+        
+      <div style={formStyles.container}>
+        <div style={formStyles.header}>
+          <h2 style={formStyles.title}>Add New Store</h2>
+          <button 
+            style={formStyles.cancelButton} 
+            onClick={this.props.onCancel}
+          >
+            &times;
+          </button>
         </div>
-        <div>
-          City
-          <input
-            type='text'
-            name='city'
-            value={city}
-            onChange={this.handleChange}
-          />
+
+        <form onSubmit={this.handleSubmit} style={formStyles.form}>  <div style={formStyles.grid}>
+            <div style={formStyles.formGroup}>
+              <label style={formStyles.label}>Store Name</label>
+              <input
+                style={formStyles.input}
+                type='text'
+                name='name'
+                value={name}
+                onChange={this.handleChange}
+                placeholder="Enter store name"
+              />
+            </div>
+  
+            <div style={formStyles.formGroup}>
+              <label style={formStyles.label}>City</label>
+              <input
+                style={formStyles.input}
+                type='text'
+                name='city'
+                value={city}
+                onChange={this.handleChange}
+                placeholder="Enter city"
+              />
+            </div>
+
+            <div style={formStyles.formGroup}>
+            <label style={formStyles.label}>State</label>
+            <input
+                style={formStyles.input}
+                type='text'
+                name='state'
+                value={state}
+                onChange={this.handleChange}
+                placeholder="Enter state"
+            />
+            </div>
+
+            <div style={formStyles.formGroup}>
+            <label style={formStyles.label}>Street</label>
+            <input
+                style={formStyles.input}
+                type='text'
+                name='street'
+                value={street}
+                onChange={this.handleChange}
+                placeholder="Enter street"
+            />
+            </div>
+
+            <div style={formStyles.formGroup}>
+            <label style={formStyles.label}>Zip Code</label>
+            <input
+                style={formStyles.input}
+                type='text'
+                name='zip_code'
+                value={zip_code}
+                onChange={this.handleChange}
+                placeholder="Enter zip code"
+            />
+            </div>
+
+            <div style={formStyles.formGroup}>
+            <label style={formStyles.label}>Description</label>
+            <input
+                style={formStyles.input}
+                type='text'
+                name='description'
+                value={description}
+                onChange={this.handleChange}
+                placeholder="Enter description"
+            />
+            </div>
+
+            <div style={formStyles.formGroup}>
+            <label style={formStyles.label}>Website</label>
+            <input
+                style={formStyles.input}
+                type='text'
+                name='website'
+                value={website}
+                onChange={this.handleChange}
+                placeholder="Enter website URL"
+            />
+            </div>
+
+            <div style={formStyles.formGroup}>
+            <label style={formStyles.label}>Phone</label>
+            <input
+                style={formStyles.input}
+                type='text'
+                name='phone_number'
+                value={phone_number}
+                onChange={this.handleChange}
+                placeholder="Enter phone number"
+            />
+            </div>
+
+            <div style={formStyles.formGroup}>
+              <label style={formStyles.label}>Logo Image</label>
+              <input
+                style={formStyles.fileInput}
+                type='file'
+                name='logo_image'
+                onChange={this.handleChange}
+              />
+            </div>
+
+            <div style={formStyles.formGroup}>
+            <label style={formStyles.label}>Email</label>
+            <input
+                style={formStyles.input}
+                type='text'
+                name='email'
+                value={email}
+                onChange={this.handleChange}
+                placeholder="Enter email"
+            />
+            </div>
+
+            <div style={formStyles.formGroup}>
+            <label style={formStyles.label}>Active</label>
+            <input
+                style={formStyles.input}
+                type='text'
+                name='active'
+                value={active}
+                onChange={this.handleChange}
+                placeholder="Enter active status"
+            />
+            </div>
+          </div>
+  
+          <div style={formStyles.buttonGroup}>
+            <button 
+              type="button" 
+              style={formStyles.cancelButton}
+              onClick={this.props.onCancel}
+            >
+              Cancel
+            </button>
+            <button 
+              type="submit" 
+              style={formStyles.submitButton}
+            >
+              Save Store
+            </button>
+          </div>
+        
+        </form>
         </div>
-        <div>
-          State
-          <input
-            type='text'
-            name='state'
-            value={state}
-            onChange={this.handleChange}
-          />
-        </div>
-        <div>
-          Street
-          <input
-            type='text'
-            name='street'
-            value={street}
-            onChange={this.handleChange}
-          />
-        </div>
-        <div>
-          Zip_Code
-          <input
-            type='text'
-            name='zip_code'
-            value={zip_code}
-            onChange={this.handleChange}
-          />
-        </div>
-        <div>
-          Description
-          <input
-            type='text'
-            name='description'
-            value={description}
-            onChange={this.handleChange}
-          />
-        </div>
-        <div>
-          Website
-          <input
-            type='text'
-            name='website'
-            value={website}
-            onChange={this.handleChange}
-          />
-        </div>
-        <div>
-          Phone
-          <input
-            type='text'
-            name='phone_number'
-            value={phone_number}
-            onChange={this.handleChange}
-          />
-        </div>
-        <div>
-          Logo
-          <input
-            type='file'
-            name='logo_image'
-            onChange={this.handleChange}
-          />
-        </div>
-        <div>
-          Email
-          <input
-            type='text'
-            name='email'
-            value={email}
-            onChange={this.handleChange}
-          />
-        </div>
-        <div>
-          Active
-          <input
-            type='text'
-            name='active'
-            value={active}
-            onChange={this.handleChange}
-          />
-        </div>
-        <input style={{ backgroundColor: 'white' }} type="submit" value="submit" />
-      </form>
     );
   }
 }
-
-export default StoreForm;
+  
+  const formStyles = {
+    container: {
+        backgroundColor: 'white',
+        borderRadius: '10px',
+        padding: '30px',
+        maxWidth: '600px',
+        margin: '0 auto',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+    },
+    header: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '25px'
+    },
+    title: {
+        margin: 0,
+        color: '#2c3e50'
+        },
+        cancelButton: {
+        backgroundColor: 'transparent',
+        border: 'none',
+        color: '#95a5a6',
+        fontSize: '1.5em',
+        cursor: 'pointer',
+        padding: '0 10px',
+        ':hover': {
+            color: '#7f8c8d'
+        }
+        },
+    form: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '20px'
+    },
+    grid: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+      gap: '15px'
+    },
+    formGroup: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '5px'
+    },
+    label: {
+      fontSize: '0.9em',
+      color: '#2c3e50',
+      fontWeight: '600'
+    },
+    input: {
+      padding: '10px',
+      borderRadius: '6px',
+      border: '1px solid #bdc3c7',
+      fontSize: '1em',
+      transition: 'border-color 0.2s',
+      ':focus': {
+        outline: 'none',
+        borderColor: '#3498db',
+        boxShadow: '0 0 0 2px rgba(52,152,219,0.2)'
+      }
+    },
+    fileInput: {
+      padding: '8px 0'
+    },
+    submitButton: {
+      backgroundColor: '#3498db',
+      color: 'white',
+      padding: '12px 25px',
+      borderRadius: '6px',
+      border: 'none',
+      cursor: 'pointer',
+      fontSize: '1em',
+      fontWeight: '600',
+      transition: 'background-color 0.2s',
+      alignSelf: 'flex-start',
+      ':hover': {
+        backgroundColor: '#2980b9'
+      }
+    }
+  };
+  
+  export default StoreForm;

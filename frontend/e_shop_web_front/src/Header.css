@@ -1,0 +1,67 @@
+/* Header.css */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%; /* Full width */
+    box-sizing: border-box; /* Include padding in width */
+  }
+  
+  .logo-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .logo {
+    height: 48px;
+    width: auto;
+    border-radius: 8px;
+  }
+  
+  .site-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0;
+  }
+  
+  .nav {
+    display: flex;
+    gap: 24px;
+  }
+  
+  .nav-link {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333333;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  
+  .nav-link:hover {
+    color: #27ae60;
+  }
+  
+  @media (max-width: 768px) {
+    .header {
+      flex-direction: column;
+      gap: 16px;
+      padding: 12px 16px;
+    }
+  
+    .site-title {
+      font-size: 1.5rem;
+    }
+  
+    .nav {
+      gap: 12px;
+    }
+  }
