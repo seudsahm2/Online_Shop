@@ -1,5 +1,28 @@
+import axios from 'axios';
 import React, { Component } from 'react';
+import StoreUpdate from './storeupdate';
 class StoreDetail extends Component{
+    constructor(props){
+        super(props)
+        this.state = {
+            showComponent:false,
+        };
+        this.updateStoreDetails = this.updateStoreDetails.bind(this);
+        this.deleteStore = this.deleteStore.bind(this);
+    }
+    updateStoreDetails(){
+        this.setState({showComponent:true});
+    }
+
+    deleteStore(store){
+        axios.delete(store.delete)
+        .then((response)=> {
+            console.log(response)
+        })
+        .catch(function(error){
+            console.log(error)
+        })
+    }
 
     render(){
         const store = this.props.store;
@@ -16,7 +39,14 @@ class StoreDetail extends Component{
                 <h3>{store.logo_image}</h3>
                 <h3>{store.email}</h3>
                 <h3>{store.active}</h3>
-                
+                <button style={{backgroundColor:"yellow"}} onClick={()=>this.updateStoreDetails()}>
+                    Update
+                </button>
+
+                <button style={{backgroundColor:"yellow"}} onClick={()=>this.deleteStore(store)}>
+                    Delete
+                </button>
+                {this.state.showComponent ? <StoreUpdate updateStore = {store}/>:null}
             </div>
         )
     }

@@ -30,7 +30,7 @@ class StoreList extends Component{
     }
 
     componentDidMount(){
-        axios.get("http://127.0.0.1:8000/store/")
+        axios.get(import.meta.env.VITE_APP_URL)
         .then((response) => {
             this.setState({storesData: response.data})
         })
@@ -38,6 +38,8 @@ class StoreList extends Component{
             console.log(error);
         })
     }
+    
+    
 
     render(){
         return(
