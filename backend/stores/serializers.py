@@ -42,19 +42,21 @@ class StoreListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Store
-        fields = ['id', 'name', 'city', 'zip_code', 'absolute_url']
+        fields = ['id', 'name', 'city', 'zip_code','active', 'absolute_url']
 
     def get_absolute_url(self, obj):
-        request = self.context.get('request')  # ✅ Get request context
+        request = self.context.get('request')
         if request:
-            url = reverse('store-detail', args=[obj.pk])  # ✅ Generate URL
-            full_url = request.build_absolute_uri(url)  # ✅ Absolute URL
-            print(f"Generated URL for {obj.name}: {full_url}")  # ✅ Debugging
+            url = reverse('store-detail', args=[obj.pk])
+            full_url = request.build_absolute_uri(url)
+            print(f"Generated URL for {obj.name}: {full_url}")
             return full_url
-        return None  # ✅ Return None if request is missing
+        return None
 
 
 class StoreDetailSerializer(serializers.ModelSerializer):
+    update = serializers.SerializerMethodField()
+    delete = serializers.SerializerMethodField()
     class Meta:
         model = Store
         fields = [
@@ -70,4 +72,24 @@ class StoreDetailSerializer(serializers.ModelSerializer):
             'logo_image',
             'email',
             'active',
+            'update',
+            'delete',
         ]
+
+    def get_update(self, obj):
+        request = self.context.get('request')
+        if request:
+            url = reverse('store-detail', args=[obj.pk])
+            full_url = request.build_absolute_uri(url)
+            print(f"My URL for {obj.name}: {full_url}")
+            return full_url
+        return None
+    
+    def get_delete(self, obj):
+        request = self.context.get('request')
+        if request:
+            url = reverse('store-detail', args=[obj.pk])
+            full_url = request.build_absolute_uri(url)
+            print(f"My URL for {obj.name}: {full_url}")
+            return full_url
+        return None

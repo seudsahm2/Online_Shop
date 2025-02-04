@@ -69,8 +69,8 @@ class StoreViewSet(ModelViewSet):
 
     def get_serializer_class(self):
         if self.action == 'list':
-            return StoreListSerializer  # ✅ Use correct serializer for list view
-        return StoreDetailSerializer  # ✅ Use detail serializer otherwise
+            return StoreListSerializer
+        return StoreDetailSerializer
 
 
 # class ProductListAPIView(generics.ListAPIView):
