@@ -1,11 +1,14 @@
 import axios from 'axios';
 import React, { Component } from 'react';
+import StoreDetail from './storedetail';
 
 class StoreList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      storesData: [],
+      storesData: [], // List of stores fetched initially
+      currentView: 'list', // Possible values: 'list', 'detail'
+      selectedStore: null, // Detailed store object
     };
   }
 
@@ -13,7 +16,7 @@ class StoreList extends Component {
     this.fetchStores();
   }
 
-  // Fetch stores data
+  // Fetch the list of stores
   fetchStores = () => {
     axios
       .get(import.meta.env.VITE_APP_URL)
@@ -23,14 +26,15 @@ class StoreList extends Component {
       .catch((error) => console.error(error));
   };
 
+  // Fetch detailed data for a specific store
   getStoreDetail = (item) => {
     axios
-      .get(item.absolute_url) // Fetch detailed data using the store's absolute URL
+      .get(item.absolute_url) // Assuming `absolute_url` points to the store detail endpoint
       .then((response) => {
-        console.log(response.data); // Log the response for debugging purposes
-        if (this.props.onStoreClick) {
-          this.props.onStoreClick(response.data); // Pass the detailed store data to the parent
-        }
+        this.setState({
+          selectedStore: response.data, // Update selected store with detailed data
+          currentView: 'detail', // Switch to detail view
+        });
       })
       .catch((error) => console.error(error));
   };
@@ -38,42 +42,44 @@ class StoreList extends Component {
   // Show store detail view
   showStoreDetail = (item) => {
     if (item.absolute_url) {
-      this.getStoreDetail(item); // Fetch detailed data before switching views
+      this.getStoreDetail(item); // Fetch detailed data
     } else {
       console.error('Missing absolute_url for store:', item);
     }
   };
 
-    // Notify parent when "Add Store" button is clicked
-    onAddClick = () => {
-        if (this.props.onAddClick) {
-          this.props.onAddClick(); // Notify parent to switch to form view
-        }
-      };
+  // Go back to the list view
+  handleBack = () => {
+    this.setState({ currentView: 'list', selectedStore: null });
+  };
 
-  render() {
-    const { storesData } = this.state;
+  renderView() {
+    const { currentView, selectedStore, storesData } = this.state;
 
+    // Render the appropriate view based on currentView state
+    if (currentView === 'detail') {
+      return (
+        <StoreDetail
+          store={selectedStore} // Pass the selected store to StoreDetail
+          onBack={this.handleBack} // Allow navigation back to the list view
+        />
+      );
+    }
+
+    // Default to rendering the list view
     return (
       <div style={styles.listContainer}>
         <header style={styles.header}>
-            <h1 style={styles.title}>Store Directory</h1>
-            <div style={styles.headerMeta}>
-                <span style={styles.countBadge}>
-                {storesData.length} Locations
-                </span>
-                <div style={styles.statusLegend}>
-                <span style={styles.legendItemActive}>Active</span>
-                <span style={styles.legendItemInactive}>Inactive</span>
-                </div>
-                {/* Add the "Add Store" button */}
-                <button
-                style={styles.addButton}
-                onClick={() => this.props.onAddClick()}
-                >
-                + Add Store
-                </button>
+          <h1 style={styles.title}>Store Directory</h1>
+          <div style={styles.headerMeta}>
+            <span style={styles.countBadge}>
+              {storesData.length} Locations
+            </span>
+            <div style={styles.statusLegend}>
+              <span style={styles.legendItemActive}>Active</span>
+              <span style={styles.legendItemInactive}>Inactive</span>
             </div>
+          </div>
         </header>
         <div style={styles.storeGrid}>
           {storesData.map((store) => (
@@ -84,7 +90,7 @@ class StoreList extends Component {
                 backgroundColor: store.active ? '#f8fbf9' : '#fef6f5',
                 borderColor: store.active ? '#d4ede0' : '#fadbd9',
               }}
-              onClick={() => this.showStoreDetail(store)}
+              onClick={() => this.showStoreDetail(store)} // Navigate to detail view when clicked
             >
               <div style={styles.cardHeader}>
                 <h2 style={styles.storeName}>{store.name}</h2>
@@ -119,8 +125,13 @@ class StoreList extends Component {
       </div>
     );
   }
+
+  render() {
+    return <main style={styles.container}>{this.renderView()}</main>;
+  }
 }
 
+// Styles
 const styles = {
   container: {
     maxWidth: '1440px',
@@ -128,6 +139,7 @@ const styles = {
     padding: '32px 24px',
     fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif",
     minHeight: '100vh',
+    backgroundColor: '#f9fafb',
   },
   listContainer: {
     backgroundColor: '#ffffff',
@@ -140,6 +152,9 @@ const styles = {
     marginBottom: '40px',
     paddingBottom: '24px',
     borderBottom: '1px solid #eee',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   title: {
     fontSize: '2rem',
@@ -148,11 +163,6 @@ const styles = {
     margin: '0 0 8px 0',
     letterSpacing: '-0.025em',
   },
-  headerMeta: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
   countBadge: {
     backgroundColor: '#f3f4f6',
     color: '#4b5563',
@@ -160,20 +170,6 @@ const styles = {
     borderRadius: '20px',
     fontSize: '0.875rem',
     fontWeight: '500',
-  },
-  addButton: {
-    backgroundColor: '#3498db',
-    color: 'white',
-    padding: '10px 20px',
-    borderRadius: '6px',
-    border: 'none',
-    cursor: 'pointer',
-    fontSize: '1rem',
-    fontWeight: '600',
-    transition: 'background-color 0.2s',
-    ':hover': {
-      backgroundColor: '#2980b9',
-    },
   },
   statusLegend: {
     display: 'flex',
@@ -192,7 +188,7 @@ const styles = {
       height: '10px',
       borderRadius: '50%',
       backgroundColor: '#27ae60',
-    }
+    },
   },
   legendItemInactive: {
     display: 'flex',
@@ -207,7 +203,7 @@ const styles = {
       height: '10px',
       borderRadius: '50%',
       backgroundColor: '#e74c3c',
-    }
+    },
   },
   storeGrid: {
     display: 'grid',
@@ -275,31 +271,6 @@ const styles = {
     color: '#4b5563',
     fontWeight: '500',
   },
-  '@media (max-width: 768px)': {
-    listContainer: {
-      padding: '24px',
-      borderRadius: '0',
-    },
-    title: {
-      fontSize: '1.5rem',
-    },
-    storeGrid: {
-      gridTemplateColumns: '1fr',
-    },
-    storeCard: {
-      padding: '20px',
-    }
-  },
-  '@media (max-width: 480px)': {
-    container: {
-      padding: '24px 16px',
-    },
-    headerMeta: {
-      flexDirection: 'column',
-      alignItems: 'flex-start',
-      gap: '12px',
-    }
-  }
 };
 
 export default StoreList;

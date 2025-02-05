@@ -1,242 +1,247 @@
 import axios from 'axios';
 import React, { Component } from 'react';
+import StoreUpdate from './storeupdate';
 
 class StoreDetail extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {};
-        this.updateStoreDetails = this.updateStoreDetails.bind(this);
-        this.deleteStore = this.deleteStore.bind(this);
-    }
-
-    updateStoreDetails() {
-        if (this.props.onUpdate) {
-            this.props.onUpdate(); // Notify parent to switch to 'update' view
-        }
-    }
-
-    deleteStore(store) {
-        axios.delete(store.delete)
-            .then((response) => {
-                console.log(response);
-                if (this.props.onBack) this.props.onBack(); // Go back to list view after deletion
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }
-
-    handleDelete = () => {
-        if (window.confirm('Are you sure you want to delete this store?')) {
-            this.deleteStore(this.props.store);
-        }
+  constructor(props) {
+    super(props);
+    this.state = {
+      showUpdateComponent: false, // To control whether the update form is shown
     };
+    this.updateStoreDetails = this.updateStoreDetails.bind(this);
+    this.deleteStore = this.deleteStore.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
+  }
 
-    render() {
-        const store = this.props.store;
+  // Function to toggle the update form
+  updateStoreDetails() {
+    this.setState({ showUpdateComponent: true });
+  }
 
-        return (
-            <div style={detailStyles.container}>
-                <div style={detailStyles.header}>
-                    <h1 style={detailStyles.title}>{store.name}</h1>
-                    <button style={detailStyles.backButton} onClick={this.props.onBack}>
-                        Back
-                    </button>
-                </div>
+  // Function to delete the store
+  deleteStore(store) {
+    axios
+      .delete(store.delete) // Assuming `store.delete` is the delete URL
+      .then((response) => {
+        console.log(response);
+        if (this.props.onBack) this.props.onBack(); // Navigate back to the list view after deletion
+      })
+      .catch((error) => console.error(error));
+  }
 
-                {/* Logo Section */}
-                <div style={detailStyles.logoSection}>
-                    {store.logo_image ? (
-                        <img
-                            src={store.logo_image}
-                            alt={`${store.name} Logo`}
-                            style={detailStyles.logoImage}
-                        />
-                    ) : (
-                        <p style={detailStyles.noLogo}>No Logo Available</p>
-                    )}
-                </div>
-
-                <div style={detailStyles.content}>
-                    {/* Description Section */}
-                    <div style={detailStyles.section}>
-                        <h2 style={detailStyles.sectionTitle}>Description</h2>
-                        <p style={detailStyles.detailItem}>{store.description || 'No description provided'}</p>
-                    </div>
-
-                    {/* Contact Information Section */}
-                    <div style={detailStyles.section}>
-                        <h2 style={detailStyles.sectionTitle}>Contact Information</h2>
-                        <p style={detailStyles.detailItem}>
-                            <span style={detailStyles.label}>Phone:</span> {store.phone_number || 'N/A'}
-                        </p>
-                        <p style={detailStyles.detailItem}>
-                            <span style={detailStyles.label}>Email:</span> {store.email || 'N/A'}
-                        </p>
-                        <p style={detailStyles.detailItem}>
-                            <span style={detailStyles.label}>Website:</span>{' '}
-                            {store.website ? (
-                                <a
-                                    href={store.website}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    style={detailStyles.link}
-                                >
-                                    {store.website}
-                                </a>
-                            ) : (
-                                'N/A'
-                            )}
-                        </p>
-                    </div>
-
-                    {/* Address Section */}
-                    <div style={detailStyles.section}>
-                        <h2 style={detailStyles.sectionTitle}>Address</h2>
-                        <p style={detailStyles.detailItem}>
-                            {store.street}, {store.city}, {store.state} {store.zip_code || 'N/A'}
-                        </p>
-                    </div>
-                </div>
-
-                {/* Button Group */}
-                <div style={detailStyles.buttonGroup}>
-                    <button style={detailStyles.updateButton} onClick={this.updateStoreDetails}>
-                        Update Store
-                    </button>
-                    <button style={detailStyles.deleteButton} onClick={this.handleDelete}>
-                        Delete Store
-                    </button>
-                </div>
-            </div>
-        );
+  // Confirmation dialog before deleting
+  handleDelete = () => {
+    if (window.confirm('Are you sure you want to delete this store?')) {
+      this.deleteStore(this.props.store); // Call the delete function
     }
+  };
+
+  render() {
+    const store = this.props.store;
+
+    return (
+      <div style={detailStyles.container}>
+        {/* Header Section */}
+        <div style={detailStyles.header}>
+          <h1 style={detailStyles.title}>{store.name}</h1>
+          <button style={detailStyles.backButton} onClick={this.props.onBack}>
+            Back
+          </button>
+        </div>
+
+        {/* Store Details Section */}
+        <div style={detailStyles.content}>
+          <div style={detailStyles.section}>
+            <h2 style={detailStyles.sectionTitle}>Description</h2>
+            <p style={detailStyles.detailItem}>{store.description || 'No description provided'}</p>
+          </div>
+
+          <div style={detailStyles.section}>
+            <h2 style={detailStyles.sectionTitle}>Contact Information</h2>
+            <p style={detailStyles.detailItem}>
+              <span style={detailStyles.label}>Phone:</span> {store.phone_number || 'N/A'}
+            </p>
+            <p style={detailStyles.detailItem}>
+              <span style={detailStyles.label}>Email:</span> {store.email || 'N/A'}
+            </p>
+            <p style={detailStyles.detailItem}>
+              <span style={detailStyles.label}>Website:</span>{' '}
+              {store.website ? (
+                <a href={store.website} target="_blank" rel="noopener noreferrer" style={detailStyles.link}>
+                  {store.website}
+                </a>
+              ) : (
+                'N/A'
+              )}
+            </p>
+          </div>
+
+          <div style={detailStyles.section}>
+            <h2 style={detailStyles.sectionTitle}>Address</h2>
+            <p style={detailStyles.detailItem}>
+              {store.street}, {store.city}, {store.state} {store.zip_code || 'N/A'}
+            </p>
+          </div>
+
+          <div style={detailStyles.section}>
+            <h2 style={detailStyles.sectionTitle}>Logo Image</h2>
+            {store.logo_image ? (
+              <img
+                src={store.logo_image}
+                alt={`${store.name} Logo`}
+                style={detailStyles.logoImage}
+              />
+            ) : (
+              <p style={detailStyles.noLogo}>No Logo Available</p>
+            )}
+          </div>
+
+          <div style={detailStyles.section}>
+            <h2 style={detailStyles.sectionTitle}>Status</h2>
+            <p style={detailStyles.status}>{store.active ? 'Active' : 'Inactive'}</p>
+          </div>
+        </div>
+
+        {/* Button Group */}
+        <div style={detailStyles.buttonGroup}>
+          <button style={detailStyles.updateButton} onClick={this.updateStoreDetails}>
+            Update Store
+          </button>
+          <button style={detailStyles.deleteButton} onClick={this.handleDelete}>
+            Delete Store
+          </button>
+        </div>
+
+        {/* Show Update Form if needed */}
+        {this.state.showUpdateComponent && (
+          <StoreUpdate
+            updateStore={store} // Pass the current store data to the update form
+            onSuccess={() => {
+              this.setState({ showUpdateComponent: false }); // Hide the update form after success
+              if (this.props.onBack) this.props.onBack(); // Optionally navigate back to the list
+            }}
+            onCancel={() => this.setState({ showUpdateComponent: false })} // Hide the update form on cancel
+          />
+        )}
+      </div>
+    );
+  }
 }
 
-// Styles (unchanged)
+// Styles
 const detailStyles = {
-    container: {
-        backgroundColor: '#ffffff',
-        borderRadius: '16px',
-        padding: '40px',
-        maxWidth: '800px',
-        margin: '0 auto',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
-        fontFamily: "'Inter', sans-serif",
+  container: {
+    backgroundColor: 'white',
+    borderRadius: '10px',
+    padding: '30px',
+    maxWidth: '800px',
+    margin: '0 auto',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+  },
+  header: {
+    borderBottom: '1px solid #ecf0f1',
+    paddingBottom: '20px',
+    marginBottom: '25px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  title: {
+    color: '#2c3e50',
+    margin: '0 0 8px 0',
+    fontSize: '1.5em',
+  },
+  content: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+    gap: '30px',
+    marginBottom: '30px',
+  },
+  section: {
+    padding: '15px',
+    border: '1px solid #ecf0f1',
+    borderRadius: '8px',
+  },
+  sectionTitle: {
+    color: '#3498db',
+    margin: '0 0 15px 0',
+    fontSize: '1.1em',
+  },
+  detailItem: {
+    color: '#34495e',
+    margin: '0 0 10px 0',
+    lineHeight: '1.5',
+  },
+  label: {
+    fontWeight: '600',
+    marginRight: '8px',
+  },
+  link: {
+    color: '#3498db',
+    textDecoration: 'none',
+    ':hover': {
+      textDecoration: 'underline',
     },
-    header: {
-        borderBottom: '1px solid #ecf0f1',
-        paddingBottom: '20px',
-        marginBottom: '25px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+  },
+  buttonGroup: {
+    display: 'flex',
+    gap: '15px',
+    marginTop: '25px',
+  },
+  updateButton: {
+    backgroundColor: '#3498db',
+    color: 'white',
+    padding: '10px 20px',
+    borderRadius: '6px',
+    border: 'none',
+    cursor: 'pointer',
+    transition: 'background-color 0.2s',
+    ':hover': {
+      backgroundColor: '#2980b9',
     },
-    title: {
-        color: '#2c3e50',
-        fontSize: '2rem',
-        fontWeight: '700',
-        margin: '0 0 8px 0',
+  },
+  deleteButton: {
+    backgroundColor: '#e74c3c',
+    color: 'white',
+    padding: '10px 20px',
+    borderRadius: '6px',
+    border: 'none',
+    cursor: 'pointer',
+    transition: 'background-color 0.2s',
+    ':hover': {
+      backgroundColor: '#c0392b',
     },
-    logoSection: {
-        textAlign: 'center',
-        marginBottom: '25px',
+  },
+  backButton: {
+    backgroundColor: '#95a5a6',
+    color: 'white',
+    padding: '8px 15px',
+    borderRadius: '5px',
+    border: 'none',
+    cursor: 'pointer',
+    ':hover': {
+      backgroundColor: '#7f8c8d',
     },
-    logoImage: {
-        maxWidth: '150px',
-        maxHeight: '150px',
-        borderRadius: '8px',
-        objectFit: 'cover',
-        border: '2px solid #ecf0f1',
-    },
-    noLogo: {
-        color: '#7f8c8d',
-        fontSize: '1rem',
-        fontWeight: '500',
-    },
-    content: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-        gap: '30px',
-        marginBottom: '30px',
-    },
-    section: {
-        padding: '20px',
-        border: '1px solid #ecf0f1',
-        borderRadius: '12px',
-        backgroundColor: '#fafafa',
-    },
-    sectionTitle: {
-        color: '#3498db',
-        fontSize: '1.2rem',
-        fontWeight: '600',
-        margin: '0 0 15px 0',
-    },
-    detailItem: {
-        color: '#34495e',
-        fontSize: '1rem',
-        margin: '0 0 10px 0',
-        lineHeight: '1.5',
-    },
-    label: {
-        fontWeight: '600',
-        marginRight: '8px',
-        color: '#555',
-    },
-    link: {
-        color: '#3498db',
-        textDecoration: 'none',
-        ':hover': {
-            textDecoration: 'underline',
-        },
-    },
-    buttonGroup: {
-        display: 'flex',
-        justifyContent: 'center',
-        gap: '20px',
-        marginTop: '25px',
-    },
-    updateButton: {
-        backgroundColor: '#3498db',
-        color: '#ffffff',
-        padding: '12px 24px',
-        borderRadius: '8px',
-        border: 'none',
-        cursor: 'pointer',
-        fontSize: '1rem',
-        fontWeight: '600',
-        transition: 'background-color 0.2s',
-        ':hover': {
-            backgroundColor: '#2980b9',
-        },
-    },
-    deleteButton: {
-        backgroundColor: '#e74c3c',
-        color: '#ffffff',
-        padding: '12px 24px',
-        borderRadius: '8px',
-        border: 'none',
-        cursor: 'pointer',
-        fontSize: '1rem',
-        fontWeight: '600',
-        transition: 'background-color 0.2s',
-        ':hover': {
-            backgroundColor: '#c0392b',
-        },
-    },
-    backButton: {
-        backgroundColor: '#95a5a6',
-        color: '#ffffff',
-        padding: '10px 20px',
-        borderRadius: '6px',
-        border: 'none',
-        cursor: 'pointer',
-        fontSize: '0.9rem',
-        transition: 'background-color 0.2s',
-        ':hover': {
-            backgroundColor: '#7f8c8d',
-        },
-    },
+  },
+  logoImage: {
+    maxWidth: '150px',
+    maxHeight: '150px',
+    borderRadius: '8px',
+    objectFit: 'cover',
+    border: '2px solid #ecf0f1',
+    margin: '10px 0',
+  },
+  noLogo: {
+    color: '#7f8c8d',
+    fontSize: '0.9em',
+    textAlign: 'center',
+  },
+  status: {
+    color: (store) => (store.active ? '#27ae60' : '#e74c3c'),
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    fontSize: '0.9em',
+  },
 };
 
 export default StoreDetail;
