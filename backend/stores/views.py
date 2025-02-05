@@ -101,7 +101,12 @@ class StoreViewSet(ModelViewSet):
 
 class ProductViewSet(ModelViewSet):
     # queryset = Product.objects.all()
-    serializer_class = ProductDetailSerializer
+    # serializer_class = ProductDetailSerializer
 
     def get_queryset(self):
         return Product.objects.filter(store_id=self.kwargs['store_pk'])
+    
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return ProductListSerializer
+        return ProductDetailSerializer
