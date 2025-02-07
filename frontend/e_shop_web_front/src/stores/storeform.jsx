@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { Component } from 'react';
 
 class StoreForm extends Component {
@@ -31,6 +30,10 @@ class StoreForm extends Component {
     }
   }
 
+  sendData(url,formData){
+    this.props.onCreate(url,formData)
+  }
+
   handleSubmit(event) {
     event.preventDefault();
     // Create a FormData object
@@ -48,19 +51,10 @@ class StoreForm extends Component {
     }
     formData.append('email', this.state.email);
     formData.append('active', this.state.active);
-    this.props.onSuccess();
 
-    axios.post(import.meta.env.VITE_APP_URL, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-      .then((response) => {
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    this.sendData(import.meta.env.VITE_APP_URL,formData)
+
+      this.props.onSuccess();
   }
 
   render() {

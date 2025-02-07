@@ -1,44 +1,21 @@
-import axios from 'axios';
 import React, { Component } from 'react';
-import StoreUpdate from './storeupdate';
 
 class StoreDetail extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      showUpdateComponent: false, // To control whether the update form is shown
-    };
-    this.updateStoreDetails = this.updateStoreDetails.bind(this);
-    this.deleteStore = this.deleteStore.bind(this);
-    this.handleDelete = this.handleDelete.bind(this);
+    // No local state is needed for toggling the update view
+    console.log("StoreDetail initialized with props:", props);
   }
-
-  // Function to toggle the update form
-  updateStoreDetails() {
-    this.setState({ showUpdateComponent: true });
-  }
-
-  // Function to delete the store
-  deleteStore(store) {
-    axios
-      .delete(store.delete) // Assuming `store.delete` is the delete URL
-      .then((response) => {
-        console.log(response);
-        if (this.props.onBack) this.props.onBack(); // Navigate back to the list view after deletion
-      })
-      .catch((error) => console.error(error));
-  }
-
-  // Confirmation dialog before deleting
-  handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this store?')) {
-      this.deleteStore(this.props.store); // Call the delete function
-    }
-  };
 
   render() {
-    const store = this.props.store;
+    console.log("StoreDetail received props:", this.props);
+    const store = this.props.item;
+    if (!store) {
+      console.log("StoreDetail: store data not available, rendering Loading...");
+      return <div style={detailStyles.loading}>Loading...</div>;
+    }
 
+    console.log("Rendering StoreDetail with store:", store);
     return (
       <div style={detailStyles.container}>
         {/* Header Section */}
@@ -53,21 +30,30 @@ class StoreDetail extends Component {
         <div style={detailStyles.content}>
           <div style={detailStyles.section}>
             <h2 style={detailStyles.sectionTitle}>Description</h2>
-            <p style={detailStyles.detailItem}>{store.description || 'No description provided'}</p>
+            <p style={detailStyles.detailItem}>
+              {store.description || 'No description provided'}
+            </p>
           </div>
 
           <div style={detailStyles.section}>
             <h2 style={detailStyles.sectionTitle}>Contact Information</h2>
             <p style={detailStyles.detailItem}>
-              <span style={detailStyles.label}>Phone:</span> {store.phone_number || 'N/A'}
+              <span style={detailStyles.label}>Phone:</span>{' '}
+              {store.phone_number || 'N/A'}
             </p>
             <p style={detailStyles.detailItem}>
-              <span style={detailStyles.label}>Email:</span> {store.email || 'N/A'}
+              <span style={detailStyles.label}>Email:</span>{' '}
+              {store.email || 'N/A'}
             </p>
             <p style={detailStyles.detailItem}>
               <span style={detailStyles.label}>Website:</span>{' '}
               {store.website ? (
-                <a href={store.website} target="_blank" rel="noopener noreferrer" style={detailStyles.link}>
+                <a
+                  href={store.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={detailStyles.link}
+                >
                   {store.website}
                 </a>
               ) : (
@@ -98,37 +84,30 @@ class StoreDetail extends Component {
 
           <div style={detailStyles.section}>
             <h2 style={detailStyles.sectionTitle}>Status</h2>
-            <p style={detailStyles.status}>{store.active ? 'Active' : 'Inactive'}</p>
+            <p style={detailStyles.status}>
+              {store.active ? 'Active' : 'Inactive'}
+            </p>
           </div>
         </div>
 
         {/* Button Group */}
         <div style={detailStyles.buttonGroup}>
-          <button style={detailStyles.updateButton} onClick={this.updateStoreDetails}>
+          <button
+            style={detailStyles.updateButton}
+            onClick={() => this.props.onUpdateClick(store)}
+          >
             Update Store
           </button>
-          <button style={detailStyles.deleteButton} onClick={this.handleDelete}>
+          <button style={detailStyles.deleteButton} onClick={()=>this.props.onDeleteClick(store)}>
             Delete Store
           </button>
         </div>
-
-        {/* Show Update Form if needed */}
-        {this.state.showUpdateComponent && (
-          <StoreUpdate
-            updateStore={store} // Pass the current store data to the update form
-            onSuccess={() => {
-              this.setState({ showUpdateComponent: false }); // Hide the update form after success
-              if (this.props.onBack) this.props.onBack(); // Optionally navigate back to the list
-            }}
-            onCancel={() => this.setState({ showUpdateComponent: false })} // Hide the update form on cancel
-          />
-        )}
       </div>
     );
   }
 }
 
-// Styles
+// Inline styles for StoreDetail
 const detailStyles = {
   container: {
     backgroundColor: 'white',
@@ -148,8 +127,8 @@ const detailStyles = {
   },
   title: {
     color: '#2c3e50',
-    margin: '0 0 8px 0',
     fontSize: '1.5em',
+    margin: '0 0 8px 0',
   },
   content: {
     display: 'grid',
@@ -179,9 +158,6 @@ const detailStyles = {
   link: {
     color: '#3498db',
     textDecoration: 'none',
-    ':hover': {
-      textDecoration: 'underline',
-    },
   },
   buttonGroup: {
     display: 'flex',
@@ -196,9 +172,6 @@ const detailStyles = {
     border: 'none',
     cursor: 'pointer',
     transition: 'background-color 0.2s',
-    ':hover': {
-      backgroundColor: '#2980b9',
-    },
   },
   deleteButton: {
     backgroundColor: '#e74c3c',
@@ -208,9 +181,6 @@ const detailStyles = {
     border: 'none',
     cursor: 'pointer',
     transition: 'background-color 0.2s',
-    ':hover': {
-      backgroundColor: '#c0392b',
-    },
   },
   backButton: {
     backgroundColor: '#95a5a6',
@@ -219,9 +189,6 @@ const detailStyles = {
     borderRadius: '5px',
     border: 'none',
     cursor: 'pointer',
-    ':hover': {
-      backgroundColor: '#7f8c8d',
-    },
   },
   logoImage: {
     maxWidth: '150px',
@@ -237,10 +204,15 @@ const detailStyles = {
     textAlign: 'center',
   },
   status: {
-    color: (store) => (store.active ? '#27ae60' : '#e74c3c'),
     fontWeight: '600',
     textTransform: 'uppercase',
     fontSize: '0.9em',
+  },
+  loading: {
+    textAlign: 'center',
+    padding: '20px',
+    fontSize: '1.2em',
+    color: '#7f8c8d',
   },
 };
 

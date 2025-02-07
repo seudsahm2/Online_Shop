@@ -1,22 +1,21 @@
-import axios from 'axios';
 import { Component } from 'react';
-
 class StoreUpdate extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      obj_to_update: this.props.updateStore,
-      name: this.props.updateStore.name,
-      street: this.props.updateStore.street,
-      city: this.props.updateStore.city,
-      state: this.props.updateStore.state,
-      zip_code: this.props.updateStore.zip_code,
-      description: this.props.updateStore.description,
-      website: this.props.updateStore.website,
-      phone_number: this.props.updateStore.phone_number,
-      logo_image: this.props.updateStore.logo_image,
-      email: this.props.updateStore.email,
-      active: this.props.updateStore.active
+      obj_to_update: this.props.item,
+      name: this.props.item.name,
+      street: this.props.item.street,
+      city: this.props.item.city,
+      state: this.props.item.state,
+      zip_code: this.props.item.zip_code,
+      description: this.props.item.description,
+      website: this.props.item.website,
+      phone_number: this.props.item.phone_number,
+      logo_image: this.props.item.logo_image,
+      email: this.props.item.email,
+      active: this.props.item.active,
+      parent:"detail"
     };
   }
 
@@ -27,6 +26,13 @@ class StoreUpdate extends Component {
     } else {
       this.setState({ [name]: event.target.value });
     }
+  }
+
+  sendData(obj_to_update,formData,parent){
+    console.log("hllo")
+    console.log("object to update: ",obj_to_update)
+    console.log("formData: ",formData)
+    this.props.onUpdate(obj_to_update,formData,parent)
   }
 
   handleSubmit = (event) => {
@@ -45,11 +51,15 @@ class StoreUpdate extends Component {
     }
     formData.append('email', this.state.email);
     formData.append('active', this.state.active);
-    axios.patch(this.state.obj_to_update.update, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    })
-    .then(response => console.log(response))
-    .catch(error => console.log(error));
+    console.log(this.state.obj_to_update);
+    console.log(formData)
+
+    this.sendData(this.state.obj_to_update,formData,parent);
+    // axios.patch(this.state.obj_to_update.update, formData, {
+    //   headers: { 'Content-Type': 'multipart/form-data' }
+    // })
+    // .then(response => console.log(response.data))
+    // .catch(error => console.log(error));
   }
 
   render() {
@@ -59,7 +69,13 @@ class StoreUpdate extends Component {
     return (
       <div style={styles.container}>
         <div style={styles.header}>
-          <h1 style={styles.title}>Update Store Details</h1>
+          <h2 style={styles.title}>Update Store Details</h2>
+          <button 
+            style={styles.cancelButton} 
+            onClick={this.props.onCancel}
+          >
+            &times;
+          </button>
         </div>
 
         <form onSubmit={this.handleSubmit} style={styles.form}>
@@ -220,25 +236,35 @@ class StoreUpdate extends Component {
 }
 
 const styles = {
-  container: {
-    backgroundColor: '#ffffff',
-    borderRadius: '12px',
-    boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
-    padding: '32px',
-    maxWidth: '800px',
-    margin: '0 auto',
-  },
-  header: {
-    marginBottom: '32px',
-    paddingBottom: '24px',
-    borderBottom: '1px solid #eee',
-  },
+    container: {
+        backgroundColor: 'white',
+        borderRadius: '10px',
+        padding: '30px',
+        maxWidth: '600px',
+        margin: '0 auto',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+    },
+    header: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '25px'
+    },
   title: {
-    fontSize: '1.75rem',
-    fontWeight: '600',
-    color: '#1a1a1a',
     margin: 0,
-  },
+    color: '#2c3e50'
+    },
+    cancelButton: {
+    backgroundColor: 'transparent',
+    border: 'none',
+    color: '#95a5a6',
+    fontSize: '1.5em',
+    cursor: 'pointer',
+    padding: '0 10px',
+    ':hover': {
+        color: '#7f8c8d'
+    }
+    },
   form: {
     display: 'flex',
     flexDirection: 'column',

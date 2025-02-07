@@ -1,86 +1,54 @@
+// Import necessary libraries
 import axios from 'axios';
 import React, { Component } from 'react';
-import StoreDetail from './storedetail';
 
+// StoreList Component
 class StoreList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      storesData: [], // List of stores fetched initially
-      currentView: 'list', // Possible values: 'list', 'detail'
-      selectedStore: null, // Detailed store object
+      storesData: [] // Array to store the fetched list of stores
     };
   }
 
+  // When the component mounts, fetch the store data.
   componentDidMount() {
     this.fetchStores();
   }
 
-  // Fetch the list of stores
-  fetchStores = () => {
-    axios
-      .get(import.meta.env.VITE_APP_URL)
-      .then((response) => {
-        this.setState({ storesData: response.data });
-      })
-      .catch((error) => console.error(error));
-  };
-
-  // Fetch detailed data for a specific store
-  getStoreDetail = (item) => {
-    axios
-      .get(item.absolute_url) // Assuming `absolute_url` points to the store detail endpoint
-      .then((response) => {
-        this.setState({
-          selectedStore: response.data, // Update selected store with detailed data
-          currentView: 'detail', // Switch to detail view
-        });
-      })
-      .catch((error) => console.error(error));
-  };
-
-  // Show store detail view
-  showStoreDetail = (item) => {
-    if (item.absolute_url) {
-      this.getStoreDetail(item); // Fetch detailed data
-    } else {
-      console.error('Missing absolute_url for store:', item);
+  // Fetches the list of stores from the API
+  fetchStores = async () => {
+    try {
+      const response = await axios.get(import.meta.env.VITE_APP_URL);
+      this.setState({ storesData: response.data });
+    } catch (error) {
+      console.error("Error fetching stores:", error);
     }
   };
 
-  // Go back to the list view
-  handleBack = () => {
-    this.setState({ currentView: 'list', selectedStore: null });
-  };
+  // Render method displays the list of stores
+  render() {
+    const { storesData } = this.state;
 
-  renderView() {
-    const { currentView, selectedStore, storesData } = this.state;
-
-    // Render the appropriate view based on currentView state
-    if (currentView === 'detail') {
-      return (
-        <StoreDetail
-          store={selectedStore} // Pass the selected store to StoreDetail
-          onBack={this.handleBack} // Allow navigation back to the list view
-        />
-      );
-    }
-
-    // Default to rendering the list view
     return (
       <div style={styles.listContainer}>
         <header style={styles.header}>
           <h1 style={styles.title}>Store Directory</h1>
           <div style={styles.headerMeta}>
-            <span style={styles.countBadge}>
-              {storesData.length} Locations
-            </span>
+            <span style={styles.countBadge}>{storesData.length} Locations</span>
+            <button 
+                  style={styles.addButton}
+                  onClick={() => this.props.onAddClick()}
+                >
+                  + Add New Store
+                </button>
             <div style={styles.statusLegend}>
               <span style={styles.legendItemActive}>Active</span>
               <span style={styles.legendItemInactive}>Inactive</span>
             </div>
           </div>
         </header>
+
         <div style={styles.storeGrid}>
           {storesData.map((store) => (
             <article
@@ -90,7 +58,7 @@ class StoreList extends Component {
                 backgroundColor: store.active ? '#f8fbf9' : '#fef6f5',
                 borderColor: store.active ? '#d4ede0' : '#fadbd9',
               }}
-              onClick={() => this.showStoreDetail(store)} // Navigate to detail view when clicked
+              onClick={() => this.props.onItemClick(store)}
             >
               <div style={styles.cardHeader}>
                 <h2 style={styles.storeName}>{store.name}</h2>
@@ -105,17 +73,11 @@ class StoreList extends Component {
               </div>
               <div style={styles.cardBody}>
                 <div style={styles.infoRow}>
-                  <svg style={styles.icon} viewBox="0 0 24 24">
-                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                  </svg>
                   <span style={styles.storeLocation}>
                     {store.city}, {store.state} {store.zip_code}
                   </span>
                 </div>
                 <div style={styles.infoRow}>
-                  <svg style={styles.icon} viewBox="0 0 24 24">
-                    <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
-                  </svg>
                   <span style={styles.storeContact}>{store.phone_number}</span>
                 </div>
               </div>
@@ -125,19 +87,18 @@ class StoreList extends Component {
       </div>
     );
   }
-
-  render() {
-    return <main style={styles.container}>{this.renderView()}</main>;
-  }
 }
 
-// Styles
+
+
+// Inline styles for the component
 const styles = {
   container: {
     maxWidth: '1440px',
     margin: '0 auto',
     padding: '32px 24px',
-    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif",
+    fontFamily:
+      "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif",
     minHeight: '100vh',
     backgroundColor: '#f9fafb',
   },
@@ -163,6 +124,11 @@ const styles = {
     margin: '0 0 8px 0',
     letterSpacing: '-0.025em',
   },
+  headerMeta: {
+    display: 'flex',
+    gap: '16px',
+    alignItems: 'center',
+  },
   countBadge: {
     backgroundColor: '#f3f4f6',
     color: '#4b5563',
@@ -181,14 +147,6 @@ const styles = {
     gap: '6px',
     color: '#27ae60',
     fontSize: '0.875rem',
-    '::before': {
-      content: '""',
-      display: 'block',
-      width: '10px',
-      height: '10px',
-      borderRadius: '50%',
-      backgroundColor: '#27ae60',
-    },
   },
   legendItemInactive: {
     display: 'flex',
@@ -196,14 +154,6 @@ const styles = {
     gap: '6px',
     color: '#e74c3c',
     fontSize: '0.875rem',
-    '::before': {
-      content: '""',
-      display: 'block',
-      width: '10px',
-      height: '10px',
-      borderRadius: '50%',
-      backgroundColor: '#e74c3c',
-    },
   },
   storeGrid: {
     display: 'grid',
@@ -217,10 +167,7 @@ const styles = {
     padding: '24px',
     cursor: 'pointer',
     transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-    ':hover': {
-      transform: 'translateY(-4px)',
-      boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
-    },
+    // Note: Pseudo-classes like :hover must be implemented using CSS or a library
   },
   cardHeader: {
     display: 'flex',
