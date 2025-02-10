@@ -21,6 +21,12 @@ class StoreDetail extends Component {
         {/* Header Section */}
         <div style={detailStyles.header}>
           <h1 style={detailStyles.title}>{store.name}</h1>
+          <button 
+              style={detailStyles.addButton}
+              onClick={() => this.props.onListClick("product",store)}
+            >
+              Products
+            </button>
           <button style={detailStyles.backButton} onClick={this.props.onBack}>
             Back
           </button>

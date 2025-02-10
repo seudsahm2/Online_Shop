@@ -1,7 +1,6 @@
 // Import necessary libraries
 import axios from 'axios';
 import React, { Component } from 'react';
-
 // StoreList Component
 class StoreList extends Component {
   constructor(props) {
@@ -41,7 +40,7 @@ class StoreList extends Component {
                   onClick={() => this.props.onAddClick()}
                 >
                   + Add New Store
-                </button>
+            </button>
             <div style={styles.statusLegend}>
               <span style={styles.legendItemActive}>Active</span>
               <span style={styles.legendItemInactive}>Inactive</span>

@@ -10,7 +10,7 @@ import StoreDetail from './stores/storedetail';
 import StoreForm from './stores/storeform';
 import StoreList from './stores/storeslist';
 import StoreUpdate from './stores/storeupdate';
-
+import Header from './Header';
 import axios from 'axios'; // Import axios for API calls
 
 class App extends Component {
@@ -19,7 +19,8 @@ class App extends Component {
     // Set initial state: default to store list view
     this.state = {
       activeEntity: 'store',    // e.g. "store", "product", etc.
-      activeAction: 'list',     // e.g. "list", "detail", "create", "update"
+      activeAction: 'list',     // e.g. "list", "detail", "create", "update",
+      item:null,
       selectedItem: null,       // The currently selected item (for detail/update)
       parentItem: null,         // For nested resources, like product inside a store
       // Pre-build the entity configuration mapping
@@ -67,14 +68,14 @@ class App extends Component {
       update: ProductUpdate,
       // Indicates that product is nested under store
       parent: 'store',
-      getUrl: (action, params = {}) => {
+      getUrl: (action, params) => {
         const storeBase = import.meta.env.VITE_APP_URL;
         if (!storeBase) {
           console.error("VITE_APP_URL is not defined in environment variables.");
           return null;
         }
         // Build URL based on parent store_pk and product id (pk)
-        const baseUrl = `${storeBase}${params.store_pk}/products/`;
+        const baseUrl = `${storeBase}${params.id}/products/`;
         switch (action) {
           case 'list':
             return baseUrl;
@@ -107,6 +108,7 @@ class App extends Component {
         activeAction: action,
         selectedItem: item,
         parentItem: parentItem,
+        item: item
       },
       () => {
         console.log("State updated to:", this.state);
@@ -149,6 +151,29 @@ class App extends Component {
       .catch(function (error) {
         console.log(error);
       });
+  }
+
+  handleList = async(entiyToOpen,parent) => {
+    const { activeEntity,entityConfig, parentItem } = this.state;
+    const config = entityConfig[entiyToOpen];
+    console.log("config is : ",config)
+    if (!config) {
+      console.error("No configuration found for entity:", activeEntity);
+      return;
+    }
+    
+    const url = config.getUrl('list',parent)
+    console.log(url)
+    await axios.get(url)
+    .then((response)=>{
+      console.log("list function called and response received")
+      this.navigateTo(entiyToOpen,'list',response.data,parentItem)
+
+    })
+    .catch((error)=>{
+      console.log(error)
+    })
+
   }
 
   // Generic function to fetch detail data for the current entity using axios.
@@ -272,7 +297,7 @@ class App extends Component {
   // The renderComponent method dynamically determines which component to display
   // based on the current activeEntity and activeAction.
   renderComponent() {
-    const { activeEntity, activeAction, selectedItem, parentItem, entityConfig } = this.state;
+    const { activeEntity, activeAction, selectedItem, parentItem, entityConfig,item } = this.state;
     console.log('Current State in renderComponent:', { activeEntity, activeAction, selectedItem, parentItem });
     const config = entityConfig[activeEntity] || {};
     const Component = config[activeAction];
@@ -294,6 +319,7 @@ class App extends Component {
     };
     // Common props passed to every child component
     const commonProps = {
+      item:this.state.item,
       urlBuilder,
       parentItem,
       onBack: this.handleBack,   
@@ -315,6 +341,10 @@ class App extends Component {
       onCreate:(url,formData)=>{
         this.handleCreate(url,formData)
       },
+      onListClick:(entiyToOpen,parent=null) => {
+        console.log("item listed")
+        this.handleList(entiyToOpen,parent)
+      },
       onItemClick:(item) => {
         console.log("List item clicked:", item);
         this.handleItemClick(item, parentItem);
@@ -324,7 +354,7 @@ class App extends Component {
         this.handleUpdateClick(item,parentItem)
       },
       onUpdate:(obj_to_update,formData,parent)=>{
-        console.log("insid app.js")
+        console.log("inside app.js")
         this.handleUpdate(obj_to_update,formData,parent);
       },
       onDeleteClick:(deletedItem)=>{
@@ -332,6 +362,7 @@ class App extends Component {
         this.handleDeleteClick(deletedItem,parentItem)
       },
       onDelete: () => this.navigateTo(activeEntity, 'list', null, parentItem),
+      onLoad:()=> this.navigateTo(activeEntity,"list",null,null)
     };
     // Render based on activeAction
     switch (activeAction) {
@@ -390,6 +421,7 @@ class App extends Component {
   render() {
     return (
       <div style={styles.container}>
+        <Header />
         {this.renderComponent()}
       </div>
     );
